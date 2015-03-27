@@ -98,11 +98,13 @@ public class TasksFragment extends Fragment {
                 CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.checkbox);
                 mCheckBox.setChecked(!mCheckBox.isChecked());
                 ((MainActivity) getActivity()).hideMenuItem(0);
+                ((MainActivity) getActivity()).hideMenuItem(1);
                 for(int i=0; i<mOpenTasksObjectList.size(); i++) {
                     CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
                     Log.i("checker", tmpChecker.isChecked() + "");
                     if(tmpChecker.isChecked()) {
                         ((MainActivity) getActivity()).showMenuItem(0);
+                        ((MainActivity) getActivity()).showMenuItem(1);
                     }
                 }
 

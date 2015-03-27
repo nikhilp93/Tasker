@@ -35,8 +35,6 @@ public class CompletedTasksFragment extends Fragment {
     ListView mListView;
     View rootView;
 
-
-
     /**
      * The fragment argument representing the section number for this
      * fragment.

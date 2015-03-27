@@ -30,7 +30,6 @@ import java.util.List;
  */
 public class CompletedTasksFragment extends Fragment {
 
-
     List<ParseObject> mOpenTasksObjectList;
     List<String> mTaskNameList;
     ListView mListView;

@@ -32,7 +32,6 @@ public class TasksFragment extends Fragment {
     View rootView;
 
 
-
     /**
      * The fragment argument representing the section number for this
      * fragment.

@@ -26,17 +26,18 @@ import java.util.List;
 public class TasksFragment extends Fragment {
 
 
-    List<ParseObject> mOpenTasksObjectList;
-    List<String> mTaskNameList;
-    ListView mListView;
-    View rootView;
-
-
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    List<ParseObject> mOpenTasksObjectList;
+    List<String> mTaskNameList;
+    ListView mListView;
+    View rootView;
+
+    public TasksFragment() {
+    }
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -48,9 +49,6 @@ public class TasksFragment extends Fragment {
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public TasksFragment() {
     }
 
     @Override
@@ -84,6 +82,20 @@ public class TasksFragment extends Fragment {
 
     }
 
+
+    public void checkForCheckedItems() {
+        ((MainActivity) getActivity()).hideMenuItem(0);
+        ((MainActivity) getActivity()).hideMenuItem(1);
+        for (int i = 0; i < mOpenTasksObjectList.size(); i++) {
+            CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
+            Log.i("checker", tmpChecker.isChecked() + "");
+            if (tmpChecker.isChecked()) {
+                ((MainActivity) getActivity()).showMenuItem(0);
+                ((MainActivity) getActivity()).showMenuItem(1);
+            }
+        }
+    }
+
     public void inflateListView() {
 
         mListView = (ListView) rootView.findViewById(R.id.tasks_list_view);
@@ -97,16 +109,7 @@ public class TasksFragment extends Fragment {
 
                 CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.checkbox);
                 mCheckBox.setChecked(!mCheckBox.isChecked());
-                ((MainActivity) getActivity()).hideMenuItem(0);
-                ((MainActivity) getActivity()).hideMenuItem(1);
-                for(int i=0; i<mOpenTasksObjectList.size(); i++) {
-                    CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
-                    Log.i("checker", tmpChecker.isChecked() + "");
-                    if(tmpChecker.isChecked()) {
-                        ((MainActivity) getActivity()).showMenuItem(0);
-                        ((MainActivity) getActivity()).showMenuItem(1);
-                    }
-                }
+                checkForCheckedItems();
 
             }
         });

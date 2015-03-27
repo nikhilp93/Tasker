@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Tasker</string>
+
+    <string name="title_section1">Tasks</string>
+    <string name="title_section2">Completed</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">New Task</string>
+    <string name="action_mark_completed">Mark Completed</string>
+    <string name="action_settings">Settings</string>
+</resources>

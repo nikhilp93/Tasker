@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/new_task_layout"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textlabel1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Name"
+            android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
+
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textColor="@color/text87"
+            android:fontFamily="sans-serif"
+            android:id="@+id/editText" android:layout_below="@+id/textlabel1" android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textlabel2"
+            android:paddingTop="16dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Description"
+            android:layout_below="@id/editText" android:layout_alignParentStart="true"/>
+
+    <EditText
+            android:layout_width="wrap_content"
+            android:inputType="text"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text87"
+            android:fontFamily="sans-serif"
+            android:height="?android:attr/listPreferredItemHeight"
+            android:id="@+id/editText2" android:layout_below="@+id/textlabel2" android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

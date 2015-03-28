@@ -1,18 +1,23 @@
 package com.matthewtporter.tasker;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.app.*;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 import com.matthewtporter.tasker.fragments.CompletedTasksFragment;
 import com.matthewtporter.tasker.fragments.TasksFragment;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
@@ -107,7 +112,7 @@ public class MainActivity extends Activity
                 tFrag.checkForCheckedItems();
             } else {
                 CompletedTasksFragment cFrag = (CompletedTasksFragment) fm.findFragmentByTag("completed_task_fragment");
-                cFrag.checkForCheckedItems();
+//                cFrag.checkForCheckedItems();
             }
             return true;
         }
@@ -123,7 +128,8 @@ public class MainActivity extends Activity
 
         switch (id) {
             case R.id.action_example:
-                Toast.makeText(this, "Make a new task!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Make a new task!", Toast.LENGTH_SHORT).show();
+                makeNewTask();
                 return true;
             case R.id.action_mark_completed:
 //                Toast.makeText(this, "Marked as completed", Toast.LENGTH_SHORT).show();
@@ -137,10 +143,55 @@ public class MainActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+    public void makeNewTask() {
+        final AlertDialog dialog = new AlertDialog.Builder(this).create();
+        dialog.setTitle("New task");
+        dialog.setView(getLayoutInflater().inflate(R.layout.new_task_layout, null));
+//        dialog.setContentView(R.layout.new_task_layout);
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Create",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface d, int which) {
+                        EditText et = (EditText) dialog.findViewById(R.id.editText);
+                        EditText et2 = (EditText) dialog.findViewById(R.id.editText2);
+                        String nameValue = et.getText().toString();
+                        String descValue = et2.getText().toString();
+                        if(nameValue.matches("") || descValue.matches("")) return;
+                        final ParseObject taskToSave = new ParseObject("OpenTasks");
+                        taskToSave.put("taskName", nameValue);
+                        taskToSave.put("taskDescription", descValue);
+                        final DialogInterface dInterface = d;
+                        taskToSave.saveEventually(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if(e==null) return;
+                                dInterface.dismiss();
+                                FragmentManager fm = getFragmentManager();
+                                TasksFragment tFrag = (TasksFragment) fm.findFragmentByTag("task_fragment");
+                                tFrag.mTaskListAdapter.notifyDataSetChanged();
+                                tFrag.mOpenTasksObjectList.add(taskToSave);
+                            }
+                        });
+                    }
+                });
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface d, int which) {
+                        d.dismiss();
+                    }
+                });
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                return;
+            }
+        });
+        dialog.show();
+    }
+
 
     public void menuClickDelete() {
         FragmentManager fm = getFragmentManager();
-        switch(currentPostion) {
+        switch (currentPostion) {
             case 0:
                 TasksFragment tFrag = (TasksFragment) fm.findFragmentByTag("task_fragment");
                 tFrag.deleteTask();
@@ -153,7 +204,7 @@ public class MainActivity extends Activity
 
     public void menuClickComplete() {
         FragmentManager fm = getFragmentManager();
-        switch(currentPostion) {
+        switch (currentPostion) {
             case 0:
                 TasksFragment tFrag = (TasksFragment) fm.findFragmentByTag("task_fragment");
                 tFrag.completeTask();

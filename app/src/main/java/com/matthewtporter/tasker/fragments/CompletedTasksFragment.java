@@ -92,6 +92,8 @@ public class CompletedTasksFragment extends Fragment {
 
         TaskListAdapter mTaskListAdapter = new TaskListAdapter(getActivity(), mOpenTasksObjectList);
 
+        Log.i("List Size", mOpenTasksObjectList.size() + "");
+
         mListView.setAdapter(mTaskListAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -102,7 +104,6 @@ public class CompletedTasksFragment extends Fragment {
                 ((MainActivity) getActivity()).hideMenuItem(1);
                 for (int i = 0; i < mOpenTasksObjectList.size(); i++) {
                     CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
-                    Log.i("checker", tmpChecker.isChecked() + "");
                     if (tmpChecker.isChecked()) {
                         ((MainActivity) getActivity()).showMenuItem(1);
                     }

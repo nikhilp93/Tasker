@@ -31,11 +31,11 @@ public class TasksFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    List<ParseObject> mOpenTasksObjectList;
+    public List<ParseObject> mOpenTasksObjectList;
     List<String> mTaskNameList;
     ListView mListView;
     View rootView;
-    TaskListAdapter mTaskListAdapter;
+    public TaskListAdapter mTaskListAdapter;
     ParseQuery<ParseObject> query = ParseQuery.getQuery("OpenTasks");
     private int numberChecked = 0;
 
@@ -97,7 +97,7 @@ public class TasksFragment extends Fragment {
         dialog.show();
 
         int localChecked = 0;
-        for(int i = 0; i < mOpenTasksObjectList.size(); i++) {
+        for(int i = mOpenTasksObjectList.size()-1; i >= 0; i--) {
             CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
             if (tmpChecker.isChecked()) {
                 localChecked++;

@@ -120,5 +120,21 @@ public class CompletedTasksFragment extends Fragment {
         ((MainActivity) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
+
+
+    public void checkForCheckedItems() {
+        ((MainActivity) getActivity()).hideMenuItem(0);
+        ((MainActivity) getActivity()).hideMenuItem(1);
+        if(mOpenTasksObjectList==null) return;
+        for (int i = 0; i < mOpenTasksObjectList.size(); i++) {
+            CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
+            Log.i("checker", tmpChecker.isChecked() + "");
+            if (tmpChecker.isChecked()) {
+                ((MainActivity) getActivity()).showMenuItem(0);
+                ((MainActivity) getActivity()).showMenuItem(1);
+            }
+        }
+    }
+
 }
 

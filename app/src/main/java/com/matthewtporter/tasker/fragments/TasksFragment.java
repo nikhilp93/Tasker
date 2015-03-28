@@ -1,21 +1,26 @@
 package com.matthewtporter.tasker.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.matthewtporter.tasker.MainActivity;
 import com.matthewtporter.tasker.R;
 import com.matthewtporter.tasker.TaskListAdapter;
-import com.parse.FindCallback;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.parse.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +40,10 @@ public class TasksFragment extends Fragment {
     List<String> mTaskNameList;
     ListView mListView;
     View rootView;
+    TaskListAdapter mTaskListAdapter;
+    ParseQuery<ParseObject> query = ParseQuery.getQuery("OpenTasks");
+    private int numberChecked = 0;
+
 
     public TasksFragment() {
     }
@@ -59,7 +68,6 @@ public class TasksFragment extends Fragment {
 
         mTaskNameList = new ArrayList<>();
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("OpenTasks");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
@@ -83,12 +91,66 @@ public class TasksFragment extends Fragment {
     }
 
 
+    public void completeTask() {
+
+        if(mOpenTasksObjectList==null) return;
+
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity()).create();
+        dialog.setTitle("Marking Tasks Complete");
+        dialog.setMessage("Hold on while we mark your task complete");
+        dialog.getWindow().addFlags(LayoutParams.FLAG_NOT_TOUCHABLE | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        dialog.show();
+
+        int localChecked = 0;
+        for(int i = 0; i < mOpenTasksObjectList.size(); i++) {
+            CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
+            if (tmpChecker.isChecked()) {
+                localChecked++;
+                final int lastChecked = localChecked;
+                final int someNumber = i;
+
+                ParseObject copyObject = new ParseObject("CompletedTasks");
+                copyObject.put("taskName", mOpenTasksObjectList.get(i).getString("taskName"));
+                copyObject.put("taskDescription", mOpenTasksObjectList.get(i).getString("taskDescription"));
+
+                copyObject.saveEventually(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null) return;
+                        ParseObject.createWithoutData("OpenTasks", mOpenTasksObjectList.get(someNumber).getObjectId()).deleteEventually(new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    mOpenTasksObjectList.remove(someNumber);
+                                    mTaskListAdapter.notifyDataSetChanged();
+                                    if (lastChecked == getNuberChecked()) {
+                                        uncheckAll();
+                                        checkForCheckedItems();
+                                        dialog.dismiss();
+                                    }
+                                } else {
+                                    Log.i("ERROR", "error!");
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+
+    public void deleteTask() {
+
+    }
+
+
     public void checkForCheckedItems() {
         ((MainActivity) getActivity()).hideMenuItem(0);
         ((MainActivity) getActivity()).hideMenuItem(1);
+        if(mOpenTasksObjectList==null) return;
         for (int i = 0; i < mOpenTasksObjectList.size(); i++) {
             CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
-            Log.i("checker", tmpChecker.isChecked() + "");
             if (tmpChecker.isChecked()) {
                 ((MainActivity) getActivity()).showMenuItem(0);
                 ((MainActivity) getActivity()).showMenuItem(1);
@@ -100,7 +162,7 @@ public class TasksFragment extends Fragment {
 
         mListView = (ListView) rootView.findViewById(R.id.tasks_list_view);
 
-        TaskListAdapter mTaskListAdapter = new TaskListAdapter(getActivity(), mOpenTasksObjectList);
+        mTaskListAdapter = new TaskListAdapter(getActivity(), mOpenTasksObjectList);
 
         mListView.setAdapter(mTaskListAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -108,12 +170,42 @@ public class TasksFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.checkbox);
-                mCheckBox.setChecked(!mCheckBox.isChecked());
+                if(mCheckBox.isChecked()) {
+                    mCheckBox.setChecked(false);
+                    decrementChecked();
+                } else {
+                    mCheckBox.setChecked(true);
+                    incrementChecked();
+                }
+
                 checkForCheckedItems();
 
             }
         });
 
+    }
+
+    public void incrementChecked() {
+        numberChecked++;
+        Log.i("Task", getNuberChecked() + "");
+    }
+
+    public void decrementChecked() {
+        numberChecked--;
+        Log.i("Task", getNuberChecked() + "");
+    }
+
+    public int getNuberChecked() {
+        return numberChecked;
+    }
+
+    public void uncheckAll() {
+        if(mOpenTasksObjectList==null) return;
+        for (int i = 0; i < mOpenTasksObjectList.size(); i++) {
+            CheckBox tmpChecker = (CheckBox) mListView.getChildAt(i).findViewById(R.id.checkbox);
+            tmpChecker.setChecked(false);
+            checkForCheckedItems();
+        }
     }
 
 

@@ -128,11 +128,9 @@ public class MainActivity extends Activity
 
         switch (id) {
             case R.id.action_example:
-//                Toast.makeText(this, "Make a new task!", Toast.LENGTH_SHORT).show();
                 makeNewTask();
                 return true;
             case R.id.action_mark_completed:
-//                Toast.makeText(this, "Marked as completed", Toast.LENGTH_SHORT).show();
                 menuClickComplete();
                 return true;
             case R.id.action_delete:
@@ -147,7 +145,6 @@ public class MainActivity extends Activity
         final AlertDialog dialog = new AlertDialog.Builder(this).create();
         dialog.setTitle("New task");
         dialog.setView(getLayoutInflater().inflate(R.layout.new_task_layout, null));
-//        dialog.setContentView(R.layout.new_task_layout);
         dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Create",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface d, int which) {
@@ -164,11 +161,11 @@ public class MainActivity extends Activity
                             @Override
                             public void done(ParseException e) {
                                 if(e==null) return;
-                                dInterface.dismiss();
                                 FragmentManager fm = getFragmentManager();
                                 TasksFragment tFrag = (TasksFragment) fm.findFragmentByTag("task_fragment");
+                                tFrag.mTaskObjectList.add(taskToSave);
                                 tFrag.mTaskListAdapter.notifyDataSetChanged();
-                                tFrag.mOpenTasksObjectList.add(taskToSave);
+                                dInterface.dismiss();
                             }
                         });
                     }
@@ -198,6 +195,7 @@ public class MainActivity extends Activity
                 break;
             case 1:
                 CompletedTasksFragment cFrag = (CompletedTasksFragment) fm.findFragmentByTag("completed_task_fragment");
+                cFrag.deleteTask();
                 break;
         }
     }
@@ -208,9 +206,6 @@ public class MainActivity extends Activity
             case 0:
                 TasksFragment tFrag = (TasksFragment) fm.findFragmentByTag("task_fragment");
                 tFrag.completeTask();
-                break;
-            case 1:
-                CompletedTasksFragment cFrag = (CompletedTasksFragment) fm.findFragmentByTag("completed_task_fragment");
                 break;
         }
     }

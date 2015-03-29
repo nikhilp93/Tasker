@@ -195,6 +195,10 @@ public class NavigationDrawerFragment extends Fragment {
         }
     }
 
+    public void goToItem(int i) {
+        selectItem(i);
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
